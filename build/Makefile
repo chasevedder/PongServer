@@ -36,7 +36,7 @@ DISTNAME      = Server1.0.0
 DISTDIR = /home/chase/workspace/PongServer/build/.tmp/Server1.0.0
 LINK          = g++
 LFLAGS        = -m64
-LIBS          = $(SUBLIBS) -lenet 
+LIBS          = $(SUBLIBS) -lenet -L/usr/local/lib -lprotobuf -pthread -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -48,8 +48,10 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../Server/main.cpp 
-OBJECTS       = main.o
+SOURCES       = ../Server/main.cpp \
+		../Server/test.pb.cc 
+OBJECTS       = main.o \
+		test.pb.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -106,7 +108,8 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		../Server/Server.pro  ../Server/main.cpp
+		../Server/Server.pro test.pb.h ../Server/main.cpp \
+		../Server/test.pb.cc
 QMAKE_TARGET  = Server
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = Server
@@ -292,8 +295,11 @@ compiler_clean:
 
 ####### Compile
 
-main.o: ../Server/main.cpp 
+main.o: ../Server/main.cpp ../Server/test.pb.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../Server/main.cpp
+
+test.pb.o: ../Server/test.pb.cc ../Server/test.pb.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o test.pb.o ../Server/test.pb.cc
 
 ####### Install
 

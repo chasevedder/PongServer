@@ -4,6 +4,7 @@
 #include <enet/enet.h>
 #include <stdio.h>
 #include <vector>
+#include "test.pb.h"
 
 using namespace std;
 
@@ -25,22 +26,18 @@ int main()
 
     enet_address_set_host(&address, "chasevedder.xyz");
 
-    string games[5];
-    games[0] = "This";
-    games[1] = "is";
-    games[2] = "a";
-    games[3] = "test";
-    games[4] = ".";
+    Test t;
 
-    vector<string> *gameList;
+    vector<string> gameList(10);
+    gameList.push_back("asdf");
+    gameList.push_back("niceeeee");
 
     cout << "starting server" << endl;
     if (server == NULL)
         cout << "aasdfasdf" << endl;
 
-    gameList->push_back("asdf");
-    gameList->push_back("asdf23");
-
+    t.add_message("asdf");
+    t.add_message("im bad");
 
 
 
@@ -53,13 +50,19 @@ int main()
                 for (int i = 0; i < 5; i++) {
                     cout << "sending packet..." << endl;
 
-                    ENetPacket * packet = enet_packet_create (games[i].c_str(), games[i].length(), ENET_PACKET_FLAG_RELIABLE);
-                    enet_peer_send(event.peer, 0, packet);
+
                 }
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
+                std::cout << "xDDDD" << std::endl;
 
-                ENetPacket * packet = enet_packet_create (gameList, gameList->size(), ENET_PACKET_FLAG_RELIABLE);
+                std::string buf;
+                t.SerializeToString(&buf);
+                //std::cout << buf << std::endl;
+                Test t2;
+                t2.ParseFromString(buf);
+                std::cout << t2.message(1) << std::endl;
+                ENetPacket * packet = enet_packet_create (buf.data(), buf.size(), ENET_PACKET_FLAG_RELIABLE);
                 enet_peer_send(event.peer, 0, packet);
 
             }
